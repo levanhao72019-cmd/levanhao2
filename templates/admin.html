@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="section-title">Quản Trị Viên</h1>
+
+    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 3rem;">
+        <!-- Add Product Form -->
+        <div style="background: var(--rm-white); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow);">
+            <h2 style="margin-bottom: 1.5rem;">Thêm Sản Phẩm Mới</h2>
+            <form action="{{ url_for('add_product') }}" method="POST">
+                <div class="form-group">
+                    <label>Tên sản phẩm</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Giá (VNĐ)</label>
+                    <input type="number" name="price" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Danh mục</label>
+                    <select name="category" class="form-control">
+                        <option value="home">Sân Nhà</option>
+                        <option value="away">Sân Khách</option>
+                        <option value="training">Training</option>
+                        <option value="accessory">Phụ Kiện</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>URL Hình ảnh</label>
+                    <input type="text" name="image" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Mô tả</label>
+                    <textarea name="description" class="form-control" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Lưu Sản Phẩm</button>
+            </form>
+        </div>
+
+        <!-- Dashboard Stats & Orders -->
+        <div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div style="background: var(--rm-blue); color: white; padding: 2rem; border-radius: 12px; text-align: center;">
+                    <h3>Tổng Doanh Thu</h3>
+                    <p style="font-size: 1.5rem; font-weight: 800; color: var(--rm-gold);">{{ "{:,.0f}".format(revenue) }} VNĐ</p>
+                </div>
+                <div style="background: var(--rm-white); padding: 2rem; border-radius: 12px; text-align: center; box-shadow: var(--shadow);">
+                    <h3>Tổng Đơn Hàng</h3>
+                    <p style="font-size: 1.5rem; font-weight: 800; color: var(--rm-blue);">{{ orders|length }}</p>
+                </div>
+            </div>
+
+            <div style="background: var(--rm-white); padding: 2rem; border-radius: 12px; box-shadow: var(--shadow);">
+                <h2 style="margin-bottom: 1.5rem;">Danh Sách Sản Phẩm</h2>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid var(--rm-blue); text-align: left;">
+                            <th style="padding: 1rem;">Tên</th>
+                            <th style="padding: 1rem;">Giá</th>
+                            <th style="padding: 1rem;">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 1rem;">{{ product.name }}</td>
+                            <td style="padding: 1rem;">{{ "{:,.0f}".format(product.price) }}</td>
+                            <td style="padding: 1rem;">
+                                <a href="{{ url_for('delete_product', id=product.id) }}" style="color: #ff4d4d;">Xóa</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

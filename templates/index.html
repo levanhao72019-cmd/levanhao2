@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero" style="background: linear-gradient(rgba(0, 70, 135, 0.5), rgba(0, 70, 135, 0.5)), url('{{ url_for('static', filename='images/banner.png') }}'); background-size: cover; background-position: center;">
+    <h1>Hala Madrid</h1>
+    <p>Chào mừng bạn đến với cửa hàng chính thức của câu lạc bộ vĩ đại nhất thế giới. Sắm ngay bộ cánh mới để cổ vũ đội bóng hoàng gia!</p>
+    <a href="#products" class="btn btn-gold" style="margin-top: 2rem;">Mua Ngay</a>
+</section>
+
+<div class="container" id="products">
+    <h2 class="section-title">Sản Phẩm Mới Nhất</h2>
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
+            </a>
+            <div class="product-info">
+                <p class="product-category">{{ product.category }}</p>
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-price">{{ "{:,.0f}".format(product.price) }} VNĐ</p>
+                <div style="margin-top: 1rem;">
+                    <a href="{{ url_for('add_to_cart', product_id=product.id) }}" class="btn btn-primary btn-block">
+                        <i class="fas fa-cart-plus"></i> Thêm Vào Giỏ
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

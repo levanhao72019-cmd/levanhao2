@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Madrid Shop - Official Store</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}" class="logo">Real <span>Madrid</span> Shop</a>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('index') }}">Trang Chủ</a></li>
+            <li><a href="#products">Sản Phẩm</a></li>
+            {% if current_user.is_authenticated %}
+                {% if current_user.role == 'admin' %}
+                    <li><a href="{{ url_for('admin') }}">Admin</a></li>
+                {% endif %}
+                <li><a href="{{ url_for('cart') }}"><i class="fas fa-shopping-cart"></i> Giỏ Hàng</a></li>
+                <li><a href="{{ url_for('logout') }}">Đăng Xuất ({{ current_user.username }})</a></li>
+            {% else %}
+                <li><a href="{{ url_for('login') }}">Đăng Nhập</a></li>
+                <li><a href="{{ url_for('register') }}">Đăng Ký</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        <p>&copy; 2024 Real Madrid CF. Thiết kế bởi Antigravity.</p>
+        <div style="margin-top: 1rem; color: var(--rm-gold);">
+            Hala Madrid y Nada Más
+        </div>
+    </footer>
+</body>
+</html>
