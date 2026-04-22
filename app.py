@@ -7,7 +7,9 @@ from datetime import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'realmadrid_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///database.db')
+if app.config['SQLALCHEMY_DATABASE_URI'].startswith("postgres://"):
+    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace("postgres://", "postgresql://", 1)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
@@ -191,6 +193,9 @@ def seed_data():
             db.session.bulk_save_objects(products)
             db.session.commit()
 
-if __name__ == '__main__':
+# --- Initialize Database ---
+with app.app_context():
     seed_data()
+
+if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
