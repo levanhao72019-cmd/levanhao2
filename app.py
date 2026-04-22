@@ -17,7 +17,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 # --- Routes ---
 
@@ -28,7 +28,7 @@ def index():
 
 @app.route('/product/<int:product_id>')
 def product_detail(product_id):
-    product = Product.query.get_or_404(product_id)
+    product = db.get_or_404(Product, product_id)
     return render_template('product_detail.html', product=product)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -100,7 +100,7 @@ def add_to_cart(product_id):
 @app.route('/remove_from_cart/<int:item_id>')
 @login_required
 def remove_from_cart(item_id):
-    item = CartItem.query.get_or_404(item_id)
+    item = db.get_or_404(CartItem, item_id)
     db.session.delete(item)
     db.session.commit()
     return redirect(url_for('cart'))
@@ -157,9 +157,10 @@ def add_product():
 @login_required
 def delete_product(id):
     if current_user.role != 'admin': return "Access Denied", 403
-    product = Product.query.get(id)
-    db.session.delete(product)
-    db.session.commit()
+    product = db.session.get(Product, id)
+    if product:
+        db.session.delete(product)
+        db.session.commit()
     return redirect(url_for('admin'))
 
 # --- Database Initialization ---
