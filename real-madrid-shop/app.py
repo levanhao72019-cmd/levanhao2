@@ -178,17 +178,25 @@ def seed_data():
             db.session.add(Cart(user_id=admin_user.id))
             db.session.commit()
 
-        if Product.query.first() and Product.query.first().category in ['home', 'away', 'training']:
-            # Force refresh if using old category names
-            Product.query.delete()
-            db.session.commit()
+        # Force refresh database to ensure new images and categories appear
+        if Product.query.first():
+            # Check if we need a refresh (e.g., if old categories or image paths are present)
+            sample = Product.query.first()
+            if sample.category in ['home', 'away', 'training', 'Jersey'] or 'static/images' in sample.image:
+                db.drop_all()
+                db.create_all()
+                # Re-create admin since we dropped everything
+                admin_user = User(username='admin', password=bcrypt.generate_password_hash('admin123').decode('utf-8'), role='admin')
+                db.session.add(admin_user)
+                db.session.add(Cart(user_id=1)) # Assuming ID 1 for first user
+                db.session.commit()
 
         if not Product.query.first():
             products = [
-                Product(name="Áo Real Madrid Sân Nhà 2024", price=1200000, description="Áo thi đấu chính thức mùa giải 2024-2025 với màu trắng truyền thống và họa tiết tinh tế.", image="images/home_kit.png", category="Jersey"),
-                Product(name="Áo Real Madrid Sân Khách 2024", price=1100000, description="Thiết kế hiện đại cho những trận đấu xa nhà, mang tông màu cam rực rỡ.", image="images/away_kit.png", category="Jersey"),
-                Product(name="Áo Real Madrid Thứ Ba 2024", price=1150000, description="Mẫu áo phá cách với tông màu xám than và họa tiết monogram RMCF.", image="images/third_kit.png", category="Jersey"),
-                Product(name="Áo Thủ Môn Real Madrid 2024", price=1300000, description="Trang phục dành cho những người gác đền của kền kền trắng với tông màu xanh dương.", image="images/gk_kit.png", category="Jersey"),
+                Product(name="Áo Real Madrid Sân Nhà 2024", price=1200000, description="Áo thi đấu chính thức mùa giải 2024-2025 với màu trắng truyền thống.", image="images/rm_home_v2.png", category="Jersey"),
+                Product(name="Áo Real Madrid Sân Khách 2024", price=1100000, description="Thiết kế hiện đại mang tông màu cam rực rỡ.", image="images/rm_away_v2.png", category="Jersey"),
+                Product(name="Áo Real Madrid Thứ Ba 2024", price=1150000, description="Mẫu áo phá cách với tông màu xám than và họa tiết monogram RMCF.", image="images/rm_third_v2.png", category="Jersey"),
+                Product(name="Áo Thủ Môn Real Madrid 2024", price=1300000, description="Trang phục dành cho những người gác đền của kền kền trắng.", image="images/rm_gk_v2.png", category="Jersey"),
                 Product(name="Áo Training Real Madrid (Navy)", price=850000, description="Thoải mái cho những buổi tập luyện chuyên nghiệp.", image="https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=1000&auto=format&fit=crop", category="Training"),
                 Product(name="Áo Khoác Anthem Real Madrid", price=1850000, description="Áo khoác cao cấp mặc khi bước ra sân vận động.", image="https://images.unsplash.com/photo-1551854838-212c50b4c184?q=80&w=1000&auto=format&fit=crop", category="Training"),
                 Product(name="Quần Short Real Madrid Home", price=550000, description="Đồng bộ hoàn hảo với áo sân nhà.", image="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=1000&auto=format&fit=crop", category="Shorts"),
