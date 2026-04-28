@@ -4,7 +4,11 @@
 <div class="container">
     <div style="display: flex; gap: 4rem; align-items: center; background: var(--rm-white); padding: 3rem; border-radius: 12px; box-shadow: var(--shadow);">
         <div style="flex: 1;">
-            <img src="{{ product.image }}" alt="{{ product.name }}" style="width: 100%; border-radius: 8px;">
+            {% if product.image.startswith('http') %}
+                <img src="{{ product.image }}" alt="{{ product.name }}" style="width: 100%; border-radius: 8px;">
+            {% else %}
+                <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}" style="width: 100%; border-radius: 8px;">
+            {% endif %}
         </div>
         <div style="flex: 1;">
             <p class="product-category" style="font-size: 1.2rem;">{{ product.category }}</p>

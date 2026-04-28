@@ -31,7 +31,11 @@
         {% for product in products %}
         <div class="product-card" data-category="{{ product.category }}" data-name="{{ product.name | lower }}">
             <a href="{{ url_for('product_detail', product_id=product.id) }}">
-                <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
+                {% if product.image.startswith('http') %}
+                    <img src="{{ product.image }}" alt="{{ product.name }}" class="product-image">
+                {% else %}
+                    <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}" class="product-image">
+                {% endif %}
             </a>
             <div class="product-info">
                 <p class="product-category">{{ product.category }}</p>

@@ -9,7 +9,11 @@
         {% for item in cart.items %}
         <div class="cart-item">
             <div style="display: flex; align-items: center; gap: 2rem;">
-                <img src="{{ item.product.image }}" alt="{{ item.product.name }}">
+                {% if item.product.image.startswith('http') %}
+                    <img src="{{ item.product.image }}" alt="{{ item.product.name }}">
+                {% else %}
+                    <img src="{{ url_for('static', filename=item.product.image) }}" alt="{{ item.product.name }}">
+                {% endif %}
                 <div>
                     <h3 style="font-size: 1.1rem;">{{ item.product.name }}</h3>
                     <p style="color: var(--rm-blue); font-weight: 700;">{{ "{:,.0f}".format(item.product.price) }} VNĐ</p>
@@ -24,10 +28,6 @@
         {% endfor %}
         
         <div style="margin-top: 3rem; text-align: right; border-top: 2px solid var(--rm-blue); padding-top: 2rem;">
-            {% set total = 0 %}
-            {% for item in cart.items %}
-                {% set total = total + (item.product.price * item.quantity) %}
-            {% endfor %}
             <h2 style="margin-bottom: 2rem;">Tổng cộng: <span style="color: var(--rm-blue);">{{ "{:,.0f}".format(total) }} VNĐ</span></h2>
             
             <form action="{{ url_for('checkout') }}" method="POST">

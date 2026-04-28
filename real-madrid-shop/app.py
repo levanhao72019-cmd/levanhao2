@@ -81,7 +81,8 @@ def logout():
 @login_required
 def cart():
     cart = Cart.query.filter_by(user_id=current_user.id).first()
-    return render_template('cart.html', cart=cart)
+    total = sum(item.product.price * item.quantity for item in cart.items) if cart else 0
+    return render_template('cart.html', cart=cart, total=total)
 
 @app.route('/add_to_cart/<int:product_id>')
 @login_required
@@ -177,12 +178,17 @@ def seed_data():
             db.session.add(Cart(user_id=admin_user.id))
             db.session.commit()
 
+        if Product.query.first() and Product.query.first().category in ['home', 'away', 'training']:
+            # Force refresh if using old category names
+            Product.query.delete()
+            db.session.commit()
+
         if not Product.query.first():
             products = [
-                Product(name="Áo Real Madrid Sân Nhà 2024", price=1200000, description="Áo thi đấu chính thức mùa giải 2024-2025 với màu trắng truyền thống và họa tiết tinh tế.", image="/static/images/home_kit.png", category="Jersey"),
-                Product(name="Áo Real Madrid Sân Khách 2024", price=1100000, description="Thiết kế hiện đại cho những trận đấu xa nhà, mang tông màu cam rực rỡ.", image="/static/images/away_kit.png", category="Jersey"),
-                Product(name="Áo Real Madrid Thứ Ba 2024", price=1150000, description="Mẫu áo phá cách với tông màu xám than và họa tiết monogram RMCF.", image="/static/images/third_kit.png", category="Jersey"),
-                Product(name="Áo Thủ Môn Real Madrid 2024", price=1300000, description="Trang phục dành cho những người gác đền của kền kền trắng với tông màu xanh dương.", image="/static/images/gk_kit.png", category="Jersey"),
+                Product(name="Áo Real Madrid Sân Nhà 2024", price=1200000, description="Áo thi đấu chính thức mùa giải 2024-2025 với màu trắng truyền thống và họa tiết tinh tế.", image="images/home_kit.png", category="Jersey"),
+                Product(name="Áo Real Madrid Sân Khách 2024", price=1100000, description="Thiết kế hiện đại cho những trận đấu xa nhà, mang tông màu cam rực rỡ.", image="images/away_kit.png", category="Jersey"),
+                Product(name="Áo Real Madrid Thứ Ba 2024", price=1150000, description="Mẫu áo phá cách với tông màu xám than và họa tiết monogram RMCF.", image="images/third_kit.png", category="Jersey"),
+                Product(name="Áo Thủ Môn Real Madrid 2024", price=1300000, description="Trang phục dành cho những người gác đền của kền kền trắng với tông màu xanh dương.", image="images/gk_kit.png", category="Jersey"),
                 Product(name="Áo Training Real Madrid (Navy)", price=850000, description="Thoải mái cho những buổi tập luyện chuyên nghiệp.", image="https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=1000&auto=format&fit=crop", category="Training"),
                 Product(name="Áo Khoác Anthem Real Madrid", price=1850000, description="Áo khoác cao cấp mặc khi bước ra sân vận động.", image="https://images.unsplash.com/photo-1551854838-212c50b4c184?q=80&w=1000&auto=format&fit=crop", category="Training"),
                 Product(name="Quần Short Real Madrid Home", price=550000, description="Đồng bộ hoàn hảo với áo sân nhà.", image="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=1000&auto=format&fit=crop", category="Shorts"),
