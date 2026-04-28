@@ -81,8 +81,7 @@ def logout():
 @login_required
 def cart():
     cart = Cart.query.filter_by(user_id=current_user.id).first()
-    total = sum(item.product.price * item.quantity for item in cart.items) if cart else 0
-    return render_template('cart.html', cart=cart, total=total)
+    return render_template('cart.html', cart=cart)
 
 @app.route('/add_to_cart/<int:product_id>')
 @login_required
@@ -116,7 +115,7 @@ def checkout():
         flash('Giỏ hàng trống!', 'warning')
         return redirect(url_for('index'))
     
-    total = sum(item.product.price * item.quantity for item in cart.items)
+    total = cart.total_price
     order = Order(user_id=current_user.id, total_price=total, status='Paid (Simulated)')
     db.session.add(order)
     db.session.flush()
@@ -197,9 +196,9 @@ def seed_data():
                 Product(name="Áo Real Madrid Sân Khách 2024", price=1100000, description="Thiết kế hiện đại mang tông màu cam rực rỡ.", image="images/rm_away_v2.png", category="Jersey"),
                 Product(name="Áo Real Madrid Thứ Ba 2024", price=1150000, description="Mẫu áo phá cách với tông màu xám than và họa tiết monogram RMCF.", image="images/rm_third_v2.png", category="Jersey"),
                 Product(name="Áo Thủ Môn Real Madrid 2024", price=1300000, description="Trang phục dành cho những người gác đền của kền kền trắng.", image="images/rm_gk_v2.png", category="Jersey"),
-                Product(name="Áo Training Real Madrid (Navy)", price=850000, description="Thoải mái cho những buổi tập luyện chuyên nghiệp.", image="https://images.unsplash.com/photo-1517466787929-bc90951d0974?q=80&w=1000&auto=format&fit=crop", category="Training"),
+                Product(name="Áo Training Real Madrid (Navy)", price=850000, description="Thoải mái cho những buổi tập luyện chuyên nghiệp.", image="images/training_kit.png", category="Training"),
                 Product(name="Áo Khoác Anthem Real Madrid", price=1850000, description="Áo khoác cao cấp mặc khi bước ra sân vận động.", image="https://images.unsplash.com/photo-1551854838-212c50b4c184?q=80&w=1000&auto=format&fit=crop", category="Training"),
-                Product(name="Quần Short Real Madrid Home", price=550000, description="Đồng bộ hoàn hảo với áo sân nhà.", image="https://images.unsplash.com/photo-1591195853828-11db59a44f6b?q=80&w=1000&auto=format&fit=crop", category="Shorts"),
+                Product(name="Quần Short Real Madrid Home", price=550000, description="Đồng bộ hoàn hảo với áo sân nhà.", image="images/home_kit.png", category="Shorts"),
                 Product(name="Tất Real Madrid 2024", price=250000, description="Chất liệu thoáng khí, hỗ trợ vận động tối ưu.", image="https://images.unsplash.com/photo-1582966232435-05842e61298c?q=80&w=1000&auto=format&fit=crop", category="Accessories"),
                 Product(name="Bóng Real Madrid Pro 2024", price=950000, description="Bóng thi đấu đạt chuẩn quốc tế.", image="https://images.unsplash.com/photo-1574629810360-7efbbe195018?q=80&w=1000&auto=format&fit=crop", category="Accessories"),
                 Product(name="Mũ Cap Real Madrid", price=450000, description="Phụ kiện không thể thiếu cho các Madridista.", image="https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=1000&auto=format&fit=crop", category="Accessories")

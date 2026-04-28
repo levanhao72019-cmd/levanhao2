@@ -26,6 +26,10 @@ class Cart(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     items = db.relationship('CartItem', backref='cart', lazy=True, cascade="all, delete-orphan")
 
+    @property
+    def total_price(self):
+        return sum(item.product.price * item.quantity for item in self.items)
+
 class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'), nullable=False)

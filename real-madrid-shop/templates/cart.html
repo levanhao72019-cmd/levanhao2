@@ -28,7 +28,7 @@
         {% endfor %}
         
         <div style="margin-top: 3rem; text-align: right; border-top: 2px solid var(--rm-blue); padding-top: 2rem;">
-            <h2 style="margin-bottom: 2rem;">Tổng cộng: <span style="color: var(--rm-blue);">{{ "{:,.0f}".format(total) }} VNĐ</span></h2>
+            <h2 style="margin-bottom: 2rem;">Tổng cộng: <span style="color: var(--rm-blue);">{{ "{:,.0f}".format(cart.total_price) }} VNĐ</span></h2>
             
             <form action="{{ url_for('checkout') }}" method="POST">
                 <button type="submit" class="btn btn-gold" style="font-size: 1.2rem; padding: 1rem 3rem;">
