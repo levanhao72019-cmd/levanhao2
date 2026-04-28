@@ -165,7 +165,6 @@ def delete_product(id):
         db.session.commit()
     return redirect(url_for('admin'))
 
-# --- Database Initialization ---
 def seed_data():
     with app.app_context():
         db.create_all()
@@ -173,22 +172,26 @@ def seed_data():
             admin_user = User(username='admin', password=bcrypt.generate_password_hash('admin123').decode('utf-8'), role='admin')
             db.session.add(admin_user)
             db.session.commit()
-            # Create cart for admin too
             db.session.add(Cart(user_id=admin_user.id))
             db.session.commit()
 
         # Force refresh database to ensure new images and categories appear
+        # We check if the database needs an update (e.g. if we are still seeing old placeholder images)
         if Product.query.first():
-            # Check if we need a refresh (e.g., if old categories or image paths are present)
             sample = Product.query.first()
-            if sample.category in ['home', 'away', 'training', 'Jersey'] or 'static/images' in sample.image:
+            # If the image path doesn't match our new local system, reset everything
+            if "images/" not in sample.image or "v2.png" not in sample.image and "training_kit.png" not in sample.image:
+                print("Detected old product data. Refreshing database...")
                 db.drop_all()
                 db.create_all()
-                # Re-create admin since we dropped everything
+                
+                # Re-create admin and their cart
                 admin_user = User(username='admin', password=bcrypt.generate_password_hash('admin123').decode('utf-8'), role='admin')
                 db.session.add(admin_user)
-                db.session.add(Cart(user_id=1)) # Assuming ID 1 for first user
                 db.session.commit()
+                db.session.add(Cart(user_id=admin_user.id))
+                db.session.commit()
+                print("Database refreshed successfully.")
 
         if not Product.query.first():
             products = [
